@@ -1,4 +1,4 @@
-var resultArray = [];
+const resultArray = [];
 fetch('https://api.lyrics.ovh/suggest/numb')
 .then(response => response.json())
 .then(returnedData => {
@@ -14,10 +14,24 @@ fetch('https://api.lyrics.ovh/suggest/numb')
         let artist = returnedData.data[i].artist.name;
         
         // Add html into the DOM
-        let searchResultHtml = `<p class="author lead"><strong class="song-title-${i}">${title}</strong> Album by <span class="song-artist-${i}">${artist}</span> <button id="${i}" class="btn btn-success lyrics-button">Get Lyrics</button></p>`;        
+        let searchResultHtml = `
+        <div class="single-result row align-items-center my-3 p-3">
+            <div class="col-md-9">
+                <h3 class="lyrics-name song-title-${i}">${title}</h3>
+                <p class="author lead">Album by <span class="song-artist-${i}">${artist}</span></p>
+            </div>
+            <div class="col-md-3 text-md-right text-center">
+                <button class="btn btn-success">Get Lyrics</button>
+            </div>
+            <p class=""></p>
+        </div>
+        
+        `;        
         document.getElementById('search-result-list').insertAdjacentHTML('beforeend', searchResultHtml);
 
     })
+
+    // <p class="author lead"><strong class="song-title-${i}">${title}</strong> Album by <span class="song-artist-${i}">${artist}</span> <button id="${i}" class="btn btn-success lyrics-button">Get Lyrics</button></p>
 
     const searchResultList = document.getElementsByClassName('lyrics-button');
     for(let i = 0; i < searchResultList.length; i++) {
@@ -31,7 +45,10 @@ fetch('https://api.lyrics.ovh/suggest/numb')
             // Fetch Lyrics from API
             fetch(`https://api.lyrics.ovh/v1/${artist}/${title}`)
             .then(response => response.json())
-            .then(data => console.log(data));
+            .then(data => {
+                let lyrics = data.lyrics;
+                document.getElementById('whole-lyrics').insertAdjacentHTML('beforeend', lyrics);
+            });
         });
     }
     
